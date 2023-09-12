@@ -1,40 +1,21 @@
-import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
-// import { Server, IncomingMessage, ServerResponse } from "http";
-import logger from "@src/utils/logger.js";
+import config from "./config/index.js";
+import Fastify, { FastifyInstance } from "fastify";
+import logger from "./utils/logger.js";
+import pingRoutes from "./app/ping/ping.routes.js";
 
-const server: FastifyInstance = Fastify({});
-
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          pong: {
-            type: "string",
-          },
-        },
-      },
-    },
-  },
-};
-
-server.get("/ping", opts, async () => {
-  return { pong: "it worked!" };
-});
+const fastify: FastifyInstance = Fastify({});
+fastify.register(pingRoutes);
 
 const start = async () => {
   try {
-    await server.listen({ port: 3000 });
-
-    const address = server.server.address();
-    const port = typeof address === "string" ? address : address?.port;
+    console.log(config);
+    await fastify.listen({ port: config.app.port });
     logger.log({
       level: "info",
-      message: `App listening on port ${port}`,
+      message: `App listening on port ${config.app.port}`,
     });
   } catch (err) {
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
 };
