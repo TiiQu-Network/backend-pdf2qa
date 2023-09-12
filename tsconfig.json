@@ -11,10 +11,7 @@
     "noImplicitReturns": true,
     "outDir": "dist",
     "baseUrl": ".",
-    "rootDir": ".",
-    "paths": {
-      "@src/*": ["src/*"]
-    }
+    "rootDir": "."
   },
-  "include": ["src"]
+  "include": ["src", "**/*.ts", "**/*.d.ts"]
 }
