@@ -1,0 +1,9 @@
+**/node_modules/
+**/dist
+*.log
+.git
+npm-debug.log
+.coverage
+.coverage.*
+.env
+.aws
