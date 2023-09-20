@@ -2,6 +2,14 @@ import { Sequelize } from "sequelize";
 import config from "../config/index.js";
 import logger from "../utils/logger.js";
 import { initUserModel, initUserAssociations } from "../app/user/user.model.js";
+import {
+  initArticleModel,
+  initArticleAssociations,
+} from "../app/article/article.model.js";
+import {
+  initArticleGeneratedQAModel,
+  initArticleGeneratedQAAssociations,
+} from "../app/article/articleGeneratedQA.model.js";
 
 const sequelize = new Sequelize(
   config.db.database || "postgres",
@@ -29,12 +37,21 @@ const initConnection = async () => {
   }
 };
 
-const initModels = () => {
+const initModels = async () => {
   try {
-    const User = initUserModel(sequelize);
-    if (User) {
-      initUserAssociations(User);
+    const User = await initUserModel(sequelize);
+    const Article = await initArticleModel(sequelize);
+    const ArticleGeneratedQA = await initArticleGeneratedQAModel(sequelize);
+    if (!User || !Article || !ArticleGeneratedQA) {
+      logger.log({
+        level: "error",
+        message: `Unable to initialize models: model object missing`,
+      });
+      return;
     }
+    await initUserAssociations(User, Article);
+    await initArticleAssociations(Article, User, ArticleGeneratedQA);
+    await initArticleGeneratedQAAssociations(ArticleGeneratedQA, Article);
   } catch (err) {
     logger.log({
       level: "error",
@@ -47,7 +64,7 @@ const initModels = () => {
 const initSequelize = async () => {
   try {
     await initConnection();
-    initModels();
+    await initModels();
     await sequelize.sync();
   } catch (err) {
     logger.log({
