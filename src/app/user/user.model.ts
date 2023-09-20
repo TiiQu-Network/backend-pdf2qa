@@ -1,11 +1,16 @@
 import { Sequelize, DataTypes, Model, ModelStatic } from "sequelize";
 import logger from "../..//utils/logger.js";
 
-const initUserModel = (sequelize: Sequelize) => {
+const initUserModel = async (sequelize: Sequelize) => {
   try {
     return sequelize.define(
       "User",
       {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true,
+        },
         name: {
           type: DataTypes.STRING,
           allowNull: false,
@@ -14,9 +19,31 @@ const initUserModel = (sequelize: Sequelize) => {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        authProvider: {
+          type: DataTypes.ENUM("auth0"),
+          defaultValue: "auth0",
+          allowNull: false,
+        },
+        authProviderId: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        affiliation: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        companyUrl: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        country: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
       },
       {
-        // Other model options go here
+        modelName: "User",
+        freezeTableName: true,
       }
     );
   } catch (err) {
@@ -28,14 +55,18 @@ const initUserModel = (sequelize: Sequelize) => {
   return;
 };
 
-const initUserAssociations = (model: ModelStatic<Model>) => {
+const initUserAssociations = async (
+  userModel: ModelStatic<Model>,
+  articleModel: ModelStatic<Model>
+  // paymentModel: ModelStatic<Model>
+) => {
   try {
-    // model.hasMany()
-    console.log(model);
+    userModel.hasMany(articleModel);
+    // userModel.hasMany(paymentModel);
   } catch (err) {
     logger.log({
       level: "error",
-      message: "Failed user associations",
+      message: "Failed to init user associations",
     });
   }
 };
