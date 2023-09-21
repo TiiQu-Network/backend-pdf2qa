@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes, Model, ModelStatic } from "sequelize";
 import logger from "../..//utils/logger.js";
+import { AUTH_PROVIDERS } from "src/config/constants.js";
 
 const initUserModel = async (sequelize: Sequelize) => {
   try {
@@ -20,8 +21,8 @@ const initUserModel = async (sequelize: Sequelize) => {
           allowNull: false,
         },
         authProvider: {
-          type: DataTypes.ENUM("auth0"),
-          defaultValue: "auth0",
+          type: DataTypes.ENUM(...AUTH_PROVIDERS),
+          defaultValue: AUTH_PROVIDERS[0],
           allowNull: false,
         },
         authProviderId: {
