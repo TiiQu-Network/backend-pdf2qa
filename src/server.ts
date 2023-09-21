@@ -1,4 +1,4 @@
-import config from "./config/index.js";
+import config from "./config/config.js";
 import Fastify, { FastifyInstance } from "fastify";
 import logger from "./utils/logger.js";
 import pingRoutes from "./app/ping/ping.routes.js";

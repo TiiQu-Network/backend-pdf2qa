@@ -35,10 +35,6 @@ const initArticleModel = async (sequelize: Sequelize) => {
           type: DataTypes.STRING,
           allowNull: true,
         },
-        uploadedBy: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
       },
       {
         modelName: "Article",
@@ -60,7 +56,9 @@ const initArticleAssociations = async (
   articleGeneratedQAModel: ModelStatic<Model>
 ) => {
   try {
-    articleModel.belongsTo(userModel);
+    articleModel.belongsTo(userModel, {
+      foreignKey: "uploadedBy",
+    });
     articleModel.hasMany(articleGeneratedQAModel);
   } catch (err) {
     logger.log({
