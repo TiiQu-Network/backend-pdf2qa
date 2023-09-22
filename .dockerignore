@@ -7,3 +7,8 @@ npm-debug.log
 .coverage.*
 .env
 .aws
+
+
+# terraform
+*.auto.tfvars
+*.tfstate*
