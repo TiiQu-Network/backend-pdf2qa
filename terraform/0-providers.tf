@@ -50,6 +50,12 @@ resource "aws_iam_group_policy_attachment" "AWSLambda_FullAccess" {
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
 }
 
+resource "aws_iam_group_policy_attachment" "AmazonS3FullAccess" {
+  group      = aws_iam_group.admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+
 resource "aws_iam_group_policy_attachment" "AWSBillingConductorReadOnlyAccess" {
   group      = aws_iam_group.admin.name
   policy_arn = "arn:aws:iam::aws:policy/AWSBillingConductorReadOnlyAccess"

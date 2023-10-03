@@ -1,6 +1,5 @@
-resource "aws_s3_bucket" "bucket" {
-  bucket = "article-bucket"
-  acl    = "private"
+resource "aws_s3_bucket" "article-bucket" {
+  bucket = "article-bucket-1"
 
   tags = {
     Name        = "Article Bucket"
