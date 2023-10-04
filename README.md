@@ -14,19 +14,15 @@ yarn install
 
 Ensure to add `.env` file with reference to `.env.template`.
 
-To ensure developers use the same environment and to make use of Docker images, it is preferred to use Docker.
+### Run lambdas on local machine
 
-### Run on local machine
+To run the lambda 'ping' locally (for example) run `func=ping yarn sls-local`.
 
-If you run on local be sure to locally install all the tools you need, e.g. Postgres.
+To deploy lambdas to AWS run `sls-deploy`.
 
-Run `yarn run dev`.
+### Run Docker
 
-### Run on Docker
-
-Run `docker-compose build` followed by `docker-compose up`.
-
-Run `curl localhost:8080/ping` to check your connection.
+Initialise database connection with `docker-compose build` followed by `docker-compose up`.
 
 ## Project Best Practices
 
