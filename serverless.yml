@@ -1,0 +1,27 @@
+service: pdf2qa-sls
+frameworkVersion: "3"
+useDotenv: true
+
+plugins:
+  - serverless-better-credentials
+
+package:
+  patterns:
+    - "!node_modules/**"
+    - "!src/**"
+    - "!terraform/**"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: eu-west-2
+
+functions:
+  ping:
+    handler: ./dist/src/lambda/ping/index.handler
+    name: ping
+    events:
+      - httpApi:
+          path: /
+          method: get

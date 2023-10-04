@@ -1,10 +1,6 @@
 import "dotenv/config";
 
 const config = {
-  app: {
-    port: Number(process.env.PORT) || 8080,
-    host: process.env.HOST || "localhost",
-  },
   db: {
     database: process.env.POSTGRES_DB,
     host: process.env.POSTGRES_HOST || "localhost",

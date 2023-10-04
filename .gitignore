@@ -3,6 +3,7 @@ logs
 node_modules/
 dist/
 *.tsbuildinfo
+.DS_Store
 
 .eslintcache
 
@@ -19,3 +20,11 @@ dist/
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# terraform
+*.auto.tfvars
+*.tfstate*
+.terraform/
+
+# Serverless directories
+.serverless
