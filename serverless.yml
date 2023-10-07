@@ -4,6 +4,7 @@ useDotenv: true
 
 plugins:
   - serverless-better-credentials
+  - serverless-offline
 
 package:
   patterns:
