@@ -5,6 +5,7 @@ useDotenv: true
 plugins:
   - serverless-better-credentials
   - serverless-offline
+  - serverless-esbuild
 
 package:
   patterns:
@@ -20,7 +21,7 @@ provider:
 
 functions:
   ping:
-    handler: ./dist/src/lambda/ping/index.handler
+    handler: ./src/lambda/ping.handler
     name: ping
     events:
       - httpApi:

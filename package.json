@@ -5,9 +5,8 @@
   "author": "josephpballantyne <josephpballantyne@gmail.com>",
   "license": "",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "build": "npx tsc",
     "lint": "yarn run eslint .",
     "sls-deploy": "AWS_SDK_LOAD_CONFIG=1 serverless deploy",
     "sls-local": "serverless invoke local --function $func"
@@ -28,12 +27,14 @@
     "@types/node": "^20.5.9",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
+    "esbuild": "^0.19.4",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
     "prettier": "3.0.3",
     "sequelize-cli": "^6.6.1",
     "serverless": "^3.35.2",
     "serverless-better-credentials": "^1.2.1",
+    "serverless-esbuild": "^1.48.4",
     "serverless-offline": "^13.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
