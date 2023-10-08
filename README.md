@@ -14,9 +14,48 @@ yarn install
 
 Ensure to add `.env` file with reference to `.env.template`.
 
-### Run lambdas on local machine
+### Develop locally with `serverless-offline` plugin
 
-To run the lambda 'ping' locally (for example) run `func=ping yarn sls-local`.
+`yarn sls-local` will start a HTTP server on your local machine that emulates AWS Lambda and AWS API Gateway:
+
+Example:
+```
+❯ yarn sls-dev
+yarn run v1.22.19
+$ sls offline --reloadHandler -s dev
+(node:25321) NOTE: We are formalizing our plans to enter AWS SDK for JavaScript (v2) into maintenance mode in 2023.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the migration guide at https://a.co/7PzMCcy
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ serverless-better-credentials: credentials resolved from config ini profile: AWS_DEFAULT_PROFILE (default)
+
+Starting Offline at stage dev (eu-west-2)
+
+Offline [http for lambda] listening on http://localhost:3002
+Function names exposed for local invocation by aws-sdk:
+           * ping: ping
+           * authorizer: authorizer
+
+   ┌──────────────────────────────────────────────────────────────────────────────┐
+   │                                                                              │
+   │   GET  | http://localhost:3000/                                              │
+   │   POST | http://localhost:3000/2015-03-31/functions/ping/invocations         │
+   │   POST | http://localhost:3000/authorizer                                    │
+   │   POST | http://localhost:3000/2015-03-31/functions/authorizer/invocations   │
+   │                                                                              │
+   └──────────────────────────────────────────────────────────────────────────────┘
+
+Server ready: http://localhost:3000 🚀
+```
+
+Use curl to make a GET request to the `ping` lambda:
+```
+❯ curl http://localhost:3000/
+{"message":"pong"}%
+```
+
+### Deploy to AWS
 
 To deploy lambdas to AWS run `sls-deploy`.
 

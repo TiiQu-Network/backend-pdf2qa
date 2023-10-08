@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "yarn run eslint .",
     "sls-deploy": "AWS_SDK_LOAD_CONFIG=1 serverless deploy",
-    "sls-local": "serverless invoke local --function $func",
+    "sls-dev": "sls offline --reloadHandler",
     "prettier": "prettier --write --ignore-unknown .",
     "test:api": "jest --runInBand --watch"
   },
