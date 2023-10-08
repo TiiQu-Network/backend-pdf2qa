@@ -6,6 +6,7 @@ plugins:
   - serverless-better-credentials
   - serverless-offline
   - serverless-esbuild
+  - serverless-plugin-test-helper
 
 package:
   patterns:
@@ -27,3 +28,11 @@ functions:
       - httpApi:
           path: /
           method: get
+  authorizer:
+    handler: ./src/lambda/authorizer.handler
+    name: authorizer
+    events:
+      - httpApi:
+          path: /authorizer
+          method: post
+          cors: true
