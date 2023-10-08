@@ -11,7 +11,7 @@
     "sls-deploy": "AWS_SDK_LOAD_CONFIG=1 serverless deploy",
     "sls-dev": "sls offline --reloadHandler",
     "prettier": "prettier --write --ignore-unknown .",
-    "test:api": "jest --runInBand --watch"
+    "test": "jest --runInBand --watch"
   },
   "dependencies": {
     "aws-lambda": "^1.0.7",

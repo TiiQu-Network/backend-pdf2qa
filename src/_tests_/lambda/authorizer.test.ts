@@ -1,4 +1,4 @@
-import authorizer from "../../lambda/authorizer";
+import { handler } from "../../lambda/authorizer";
 import { ApiGatewayTokenAuthorizerEvent } from "serverless-plugin-test-helper";
 import { generatePolicy } from "../../utils/policy";
 import { generateToken, payload } from "../helpers/authToken";
@@ -24,7 +24,7 @@ describe("authorizer", () => {
       authorizationToken: "",
     });
     const unauthorized = generatePolicy(event, "Unauthorized");
-    const response = await authorizer(event);
+    const response = await handler(event);
     expect(response).toEqual(unauthorized);
   });
 
@@ -33,7 +33,7 @@ describe("authorizer", () => {
       authorizationToken: invalidToken,
     });
     const unauthorized = generatePolicy(event, "Unauthorized");
-    const response = await authorizer(event);
+    const response = await handler(event);
     expect(response).toEqual(unauthorized);
   });
 
@@ -42,7 +42,7 @@ describe("authorizer", () => {
       authorizationToken: unknownToken,
     });
     const unauthorized = generatePolicy(event, "Unauthorized");
-    const response = await authorizer(event);
+    const response = await handler(event);
     expect(response).toEqual(unauthorized);
   });
 
@@ -52,7 +52,7 @@ describe("authorizer", () => {
       authorizationToken: testToken,
     });
     const unauthorized = generatePolicy(event, "Unauthorized");
-    const response = await authorizer(event);
+    const response = await handler(event);
     expect(response).toEqual(unauthorized);
   });
 
@@ -63,7 +63,7 @@ describe("authorizer", () => {
       authorizationToken: testToken,
     });
     const unauthorized = generatePolicy(event, "Unauthorized");
-    const response = await authorizer(event);
+    const response = await handler(event);
     expect(response).toEqual(unauthorized);
   });
 
@@ -74,7 +74,7 @@ describe("authorizer", () => {
       authorizationToken: testToken,
     });
     const allow = generatePolicy(event, "Allow", payload?.uuid);
-    const response = await authorizer(event);
+    const response = await handler(event);
     expect(response).toEqual(allow);
   });
 });

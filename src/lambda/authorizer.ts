@@ -1,10 +1,8 @@
-import { APIGatewayTokenAuthorizerEvent, AuthResponse } from "aws-lambda";
 import { generatePolicy } from "../utils/policy";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { Authorizer } from "types";
 
-export default async function handler (
-  event: APIGatewayTokenAuthorizerEvent,
-): Promise<AuthResponse> {
+export const handler: Authorizer = async (event) => {
   try {
     // verfiy authorizationToken exists
     const authorizationToken = event?.authorizationToken;
@@ -25,7 +23,7 @@ export default async function handler (
     const jwtPayload = jwt.verify(value, nextAuthSecret) as JwtPayload;
 
     return generatePolicy(event, "Allow", jwtPayload?.uuid);
-  } catch (e) {
+  } catch (e: unknown) {
     console.error(e);
     return generatePolicy(event, "Unauthorized");
   }
