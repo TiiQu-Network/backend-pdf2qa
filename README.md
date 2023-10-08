@@ -85,9 +85,17 @@ A custom authorizer can be connected to endpoints but adding the `authorizer` pr
 The `authorizer` (a dedicated function within this service) acts as a middle man for all protected routes, extracting the `sessionToken` created by NextAuth.js on the frontend abd verfiying it with the `NEXT_AUTH_SECRET` environment variable before allowing/denying further access. [See AWS docs for more infomation](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html)
 
 The custom `authorizer` endpoint can be tested as follows:
+
+1. Spin up a local server `yarn sls-dev`
+2. Make a curl request to an endpoint with an `authorizer`:
+
 ```bash
 ❯ curl -X POST http://localhost:3000/dev/upload-pdf
-{"statusCode":401,"error":"Unauthorized","message":"User is not authorized to access this resource"}% 
+{
+   "error" : "Unauthorized",
+   "message" : "User is not authorized to access this resource",
+   "statusCode" : 401
+}
 ```
 
 ### Deploy to AWS
