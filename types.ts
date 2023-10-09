@@ -1,4 +1,5 @@
 import { APIGatewayTokenAuthorizerEvent, AuthResponse } from "aws-lambda";
+import { ObjectSchema } from "yup";
 
 // NOTE: Save for upcoming lambda functions
 import {
@@ -24,7 +25,6 @@ export interface Authorizer {
   (event: APIGatewayTokenAuthorizerEvent): Promise<AuthResponse>;
 }
 
-
 export interface GeneratePolicy {
   (
     event: APIGatewayTokenAuthorizerEvent,
@@ -44,4 +44,26 @@ export interface VerifiedToken {
 
 export interface UploadPdf {
   (event: APIGatewayEvent): Promise<APIGatewayProxyResult>;
+}
+
+export interface ValidationSchemas {
+  [key: string]: ObjectSchema<{ pdfFile: string }>;
+}
+
+export interface ValidateParams {
+  [key: string]: string | number | boolean | object;
+}
+
+export interface Messages {
+  [key: number]: string;
+}
+
+export interface Response {
+  statusCode: number;
+  headers: {
+    "Access-Control-Allow-Origin": string;
+    "Access-Control-Allow-Credentials": boolean;
+    "Access-Control-Allow-Headers": string;
+  };
+  body: string;
 }

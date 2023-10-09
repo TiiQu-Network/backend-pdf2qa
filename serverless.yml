@@ -46,4 +46,4 @@ functions:
             name: authorizer
             resultTtlInSeconds: 0
             identitySource: method.request.header.cookie
-            type: token   
+            type: token

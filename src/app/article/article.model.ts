@@ -39,7 +39,7 @@ const initArticleModel = async (sequelize: Sequelize) => {
       {
         modelName: "Article",
         freezeTableName: true,
-      }
+      },
     );
   } catch (err) {
     logger.log({
@@ -53,7 +53,7 @@ const initArticleModel = async (sequelize: Sequelize) => {
 const initArticleAssociations = async (
   articleModel: ModelStatic<Model>,
   userModel: ModelStatic<Model>,
-  articleGeneratedQAModel: ModelStatic<Model>
+  articleGeneratedQAModel: ModelStatic<Model>,
 ) => {
   try {
     articleModel.belongsTo(userModel, {

@@ -60,26 +60,27 @@ Use curl to make a GET request to the `ping` lambda:
 ❯ curl http://localhost:3000/
 {"message":"pong"}%
 ```
+
 ### Custom Authorizer
 
 A custom authorizer can be connected to endpoints but adding the `authorizer` property to the function's http event:
 
 ```yml
-...
-  uploadPdf:
-    handler: ./src/lambda/uploadPdf.handler
-    name: uploadPdf
-    events:
-      - http:
-          path: /upload-pdf
-          method: post
-          # An AWS API Gateway custom authorizer function
-          authorizer:
-            name: authorizer
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.cookie
-            type: token   
-...
+
+---
+uploadPdf:
+  handler: ./src/lambda/uploadPdf.handler
+  name: uploadPdf
+  events:
+    - http:
+        path: /upload-pdf
+        method: post
+        # An AWS API Gateway custom authorizer function
+        authorizer:
+          name: authorizer
+          resultTtlInSeconds: 0
+          identitySource: method.request.header.cookie
+          type: token
 ```
 
 The `authorizer` (a dedicated function within this service) acts as a middle man for all protected routes, extracting the `sessionToken` created by NextAuth.js on the frontend abd verfiying it with the `NEXT_AUTH_SECRET` environment variable before allowing/denying further access. [See AWS docs for more infomation](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html)

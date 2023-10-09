@@ -20,7 +20,7 @@ const initPaymentTypeModel = async (sequelize: Sequelize) => {
       {
         modelName: "PaymentType",
         freezeTableName: true,
-      }
+      },
     );
   } catch (err) {
     logger.log({
@@ -35,7 +35,7 @@ const initPaymentTypeAssociations = async (
   paymentTypeModel: ModelStatic<Model>,
   paymentSingleModel: ModelStatic<Model>,
   paymentRecurringModel: ModelStatic<Model>,
-  paymentTypeMappingModel: ModelStatic<Model>
+  paymentTypeMappingModel: ModelStatic<Model>,
 ) => {
   try {
     paymentTypeModel.hasMany(paymentSingleModel);

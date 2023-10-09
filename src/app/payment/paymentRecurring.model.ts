@@ -27,7 +27,7 @@ const initPaymentRecurringModel = async (sequelize: Sequelize) => {
       {
         modelName: "PaymentRecurring",
         freezeTableName: true,
-      }
+      },
     );
   } catch (err) {
     logger.log({
@@ -41,7 +41,7 @@ const initPaymentRecurringModel = async (sequelize: Sequelize) => {
 const initPaymentRecurringAssociations = async (
   paymentRecurringModel: ModelStatic<Model>,
   paymentTypeModel: ModelStatic<Model>,
-  paymentTypeMappingModel: ModelStatic<Model>
+  paymentTypeMappingModel: ModelStatic<Model>,
 ) => {
   try {
     paymentRecurringModel.belongsTo(paymentTypeMappingModel, {

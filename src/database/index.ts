@@ -19,7 +19,7 @@ const sequelize = new Sequelize(
     host: config.db.host,
     dialect: "postgres",
     port: config.db.port,
-  }
+  },
 );
 
 const initConnection = async () => {
