@@ -1,4 +1,4 @@
-import PDFParser, { Result } from 'pdf-parse';
+import PDFParser, { Result } from "pdf-parse";
 
 export async function isValidPdf(buffer: Buffer): Promise<Result | false> {
   try {
@@ -8,6 +8,6 @@ export async function isValidPdf(buffer: Buffer): Promise<Result | false> {
   }
 }
 
-export async function isBinary (value: unknown): Promise<boolean> {
+export async function isBinary(value: unknown): Promise<boolean> {
   return value instanceof Buffer || value instanceof ArrayBuffer;
 }

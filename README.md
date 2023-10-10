@@ -66,7 +66,6 @@ Use curl to make a GET request to the `ping` lambda:
 A custom authorizer can be connected to endpoints but adding the `authorizer` property to the function's http event:
 
 ```yml
-
 ---
 uploadPdf:
   handler: ./src/lambda/uploadPdf.handler

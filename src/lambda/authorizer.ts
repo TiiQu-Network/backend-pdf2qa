@@ -1,6 +1,9 @@
+import { APIGatewayTokenAuthorizerEvent, AuthResponse } from "aws-lambda";
 import { generatePolicy } from "../utils/policy";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { Authorizer } from "types";
+export interface Authorizer {
+  (event: APIGatewayTokenAuthorizerEvent): Promise<AuthResponse>;
+}
 
 export const handler: Authorizer = async (event) => {
   try {

@@ -1,6 +1,14 @@
 import * as yup from "yup";
-import { ValidationSchemas, ValidateParams } from "types";
+import { ObjectSchema } from "yup";
 import logger from "./logger";
+
+export interface ValidationSchemas {
+  [key: string]: ObjectSchema<{ pdfFile: string }>;
+}
+
+export interface ValidateParams {
+  [key: string]: string | number | boolean | object;
+}
 
 const validationSchemas: ValidationSchemas = {
   uploadPdf: yup

@@ -1,7 +1,7 @@
 import { handler } from "../../lambda/uploadPdf";
 import { ApiGatewayEvent } from "serverless-plugin-test-helper";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 describe("uploadPdf", () => {
   it("Should return 400 Invalid parameters if pdfFile property is missing", async () => {
@@ -27,9 +27,9 @@ describe("uploadPdf", () => {
   });
 
   it("Should return 400 Invalid parameters if pdfFile binary is not a valid PDF", async () => {
-    const validPngPath = '../assets/validPng.png' 
+    const validPngPath = "../assets/validPng.png";
     const buffer = fs.readFileSync(path.resolve(__dirname, validPngPath));
-    
+
     const event = new ApiGatewayEvent({
       body: JSON.stringify({
         pdfFile: buffer,
@@ -41,11 +41,10 @@ describe("uploadPdf", () => {
     expect(statusCode).toEqual(400);
     expect(resBody?.message).toEqual("Invalid parameters");
   });
-  
-  
+
   it("Should return 400 Invalid parameters if pdfFile is encrypted", async () => {
     // prep
-    const encryptedPdfPath = '../assets/encryptedPdf.pdf' 
+    const encryptedPdfPath = "../assets/encryptedPdf.pdf";
     const buffer = fs.readFileSync(path.resolve(__dirname, encryptedPdfPath));
     const event = new ApiGatewayEvent({
       body: JSON.stringify({

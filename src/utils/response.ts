@@ -1,4 +1,16 @@
-import { Messages, Response } from "types";
+export interface Messages {
+  [key: number]: string;
+}
+
+export interface Response {
+  statusCode: number;
+  headers: {
+    "Access-Control-Allow-Origin": string;
+    "Access-Control-Allow-Credentials": boolean;
+    "Access-Control-Allow-Headers": string;
+  };
+  body: string;
+}
 
 const messages: Messages = {
   400: "Invalid parameters",

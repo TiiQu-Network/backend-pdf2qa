@@ -1,4 +1,7 @@
-import { Ping } from "types";
+import { APIGatewayProxyResult} from "aws-lambda";
+export interface Ping {
+  (): Promise<APIGatewayProxyResult>;
+}
 
 export const handler: Ping = async () => {
   try {

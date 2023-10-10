@@ -1,4 +1,12 @@
-import { GeneratePolicy } from "types";
+import { APIGatewayTokenAuthorizerEvent, AuthResponse } from "aws-lambda";
+
+export interface GeneratePolicy {
+  (
+    event: APIGatewayTokenAuthorizerEvent,
+    Effect: "Allow" | "Deny" | "Unauthorized",
+    principalId?: string,
+  ): AuthResponse;
+}
 
 export const generatePolicy: GeneratePolicy = (
   event,
