@@ -11,7 +11,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region = var.REGION
 }
 
 resource "aws_iam_user" "admin_user" {
