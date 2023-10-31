@@ -5,7 +5,7 @@ export interface Authorizer {
   (event: APIGatewayTokenAuthorizerEvent): Promise<AuthResponse>;
 }
 
-export const handler: Authorizer = async (event) => {
+export const handler = async (event) => {
   try {
     // verfiy authorizationToken exists
     const authorizationToken = event?.authorizationToken;

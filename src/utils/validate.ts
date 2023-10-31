@@ -3,7 +3,7 @@ import { ObjectSchema } from "yup";
 import logger from "./logger";
 
 export interface ValidationSchemas {
-  [key: string]: ObjectSchema<{ pdfFile: string }>;
+  [key: string]: ObjectSchema<{ [key: string]: unknown }>;
 }
 
 export interface ValidateParams {
@@ -17,6 +17,15 @@ const validationSchemas: ValidationSchemas = {
       pdfFile: yup.string().required(),
     })
     .noUnknown(),
+  generatePresignedUrl: yup
+  .object()
+  .shape({
+    name: yup.string().required(),
+    type: yup.string().required(),
+    size: yup.number().required(),
+    lastModified: yup.number().required(),
+  })
+  .noUnknown(),
 };
 
 export const validate = async (lambdaName: string, params: ValidateParams) => {

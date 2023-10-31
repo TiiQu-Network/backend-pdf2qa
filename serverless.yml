@@ -1,4 +1,4 @@
-service: pdf2qa-sls
+service: pdf2qa-validation-api
 frameworkVersion: "3"
 useDotenv: true
 
@@ -7,6 +7,9 @@ plugins:
   - serverless-offline
   - serverless-esbuild
   - serverless-plugin-test-helper
+  - serverless-s3-local
+  - serverless-step-functions
+  - serverless-step-functions-offline
 
 package:
   patterns:
@@ -17,17 +20,86 @@ package:
 provider:
   name: aws
   runtime: nodejs18.x
-  stage: dev
+  stage: ${opt:stage, 'dev'}
+  profile: pdf2qa-validation-api-user
   region: eu-west-2
 
+custom:
+  stage: ${opt:stage, 'dev'}
+  serverless-offline:
+    httpPort: 4000
+  dotenv:
+    dotenv_path: .env.${opt:stage, 'dev'}
+  s3:
+    host: localhost
+    directory: ./.buckets
+    cors: ./s3-cors.xml
+    allowMismatchedSignatures: true
+  stepFunctionsOffline:
+    stateMachineName: pdfValidationStateMachine
+  esbuild:
+    exclude: []
+  holdingAreaBucketName: ${self:custom.stage}-${self:service}-holding-area-bucket
+  validatedFilesBucketName: ${self:custom.stage}-${self:service}-validated-files-bucket
+
+resources:
+  Resources:
+    HoldingAreaBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.holdingAreaBucketName}
+        PublicAccessBlockConfiguration:
+          # allows S3BucketPolicy to be applied via deployment
+          BlockPublicPolicy: false
+          # allows public access to the bucket but within the restrictions of the S3BucketPolicy
+          RestrictPublicBuckets: false 
+        CorsConfiguration:
+          # allow PUT requests from our local dev environments
+          CorsRules:
+            - AllowedOrigins:
+                # add development origin (i.e. our Vercel hosting origin)
+                - 'http://localhost:3000'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - PUT
+              MaxAge: 3000
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256 
+
+    S3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: 
+          Ref: HoldingAreaBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS: "*" # Allow all AWS services
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource:
+                Fn::Sub:
+                  - arn:aws:s3:::${BucketName}/*
+                  - BucketName:
+                      Ref: HoldingAreaBucket
+                      
+    ValidatedFilesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.validatedFilesBucketName}  
+  Outputs:
+    PdfValidationStateMachineArn:
+      Description: The ARN of the PDF Validation State Machine
+      Value:
+        Ref: PdfValidationStateMachine          
+
 functions:
-  ping:
-    handler: ./src/lambda/ping.handler
-    name: ping
-    events:
-      - http:
-          path: /
-          method: get
   authorizer:
     handler: ./src/lambda/authorizer.handler
     name: authorizer
@@ -35,15 +107,51 @@ functions:
       - http:
           path: /authorizer
           method: post
-  uploadPdf:
-    handler: ./src/lambda/uploadPdf.handler
-    name: uploadPdf
+  # uploadPdf: # NOTE: temporarily disabled, will reuse parts as step functions
+  #   handler: ./src/lambda/uploadPdf.handler
+  #   name: uploadPdf
+  #   events:
+  #     - http:
+  #         path: /upload-pdf
+  #         method: post
+  #         authorizer:
+  #           name: authorizer
+  #           resultTtlInSeconds: 0
+  #           identitySource: method.request.header.cookie
+  #           type: token
+  generatePresignedUrl:
+    handler: ./src/lambda/generatePresignedUrl.handler
     events:
       - http:
-          path: /upload-pdf
+          path: /generate-presigned-url
           method: post
-          authorizer:
-            name: authorizer
-            resultTtlInSeconds: 0
-            identitySource: method.request.header.cookie
-            type: token
+          cors: true    
+    environment:
+      HOLDING_AREA_BUCKET_NAME: ${self:resources.Resources.HoldingAreaBucket.Properties.BucketName}
+  triggerPdfValidation:
+    handler: ./src/lambda/triggerPdfValidation.handler
+    events:
+      - s3:
+          bucket: ${self:custom.holdingAreaBucketName}
+          event: s3:ObjectCreated:*
+          existing: true
+    environment:
+      PDF_VALIDATION_STATE_MACHINE_ARN: ${self:resources.Outputs.PdfValidationStateMachineArn.Value}
+  checkForMalware:
+    handler: ./src/lambda/checkForMalware.handler
+
+stepFunctions:
+  stateMachines:
+    PdfValidationStateMachine:
+      id: PdfValidationStateMachine
+      definition:
+        Comment: "PDF validation state machine"
+        StartAt: CheckForMalware
+        States:
+          CheckForMalware:
+            Type: Task
+            Resource: 
+              Fn::GetAtt: [checkForMalware, Arn]
+            End: true
+        TimeoutSeconds: 300
+

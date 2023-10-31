@@ -29,13 +29,17 @@ const headers = {
 
 export const error = (
   statusCode = 500,
-  customMessage: string = "",
+  internalMessage = "",
+  customMessage = "",
 ): Response => {
   try {
     const body = JSON.stringify({
       message:
         customMessage.length === 0 ? messages[statusCode] : customMessage,
     });
+    if (internalMessage !== '') {
+      console.error(internalMessage);
+    }
     return {
       statusCode,
       headers,
@@ -47,6 +51,24 @@ export const error = (
       statusCode: 500,
       headers,
       body: "{'message':'Server error'}'",
+    };
+  }
+};
+
+export const success = (bodyObj = {}): Response => {
+  try {
+    const body =  JSON.stringify(bodyObj);
+    return {
+      statusCode: 200,
+      headers,
+      body,
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      statusCode: 200,
+      headers,
+      body: "{'message':'Success'}'",
     };
   }
 };
