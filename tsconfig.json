@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "module": "Node16",
+    "lib": ["ES2022"],
+    "module": "commonjs",
+    "target": "ES2022",
     "moduleResolution": "Node16",
     "sourceMap": true,
     "noImplicitAny": true,
@@ -9,7 +11,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "outDir": "dist",
     "baseUrl": ".",
     "rootDir": "."
   },

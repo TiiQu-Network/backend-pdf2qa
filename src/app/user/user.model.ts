@@ -45,7 +45,7 @@ const initUserModel = async (sequelize: Sequelize) => {
       {
         modelName: "User",
         freezeTableName: true,
-      }
+      },
     );
   } catch (err) {
     logger.log({
@@ -58,7 +58,7 @@ const initUserModel = async (sequelize: Sequelize) => {
 
 const initUserAssociations = async (
   userModel: ModelStatic<Model>,
-  articleModel: ModelStatic<Model>
+  articleModel: ModelStatic<Model>,
   // paymentModel: ModelStatic<Model>
 ) => {
   try {

@@ -36,7 +36,7 @@ const initArticleGeneratedQAModel = async (sequelize: Sequelize) => {
       {
         modelName: "ArticleGeneratedQA",
         freezeTableName: true,
-      }
+      },
     );
   } catch (err) {
     logger.log({
@@ -49,7 +49,7 @@ const initArticleGeneratedQAModel = async (sequelize: Sequelize) => {
 
 const initArticleGeneratedQAAssociations = async (
   articleGeneratedQAModel: ModelStatic<Model>,
-  articleModel: ModelStatic<Model>
+  articleModel: ModelStatic<Model>,
 ) => {
   try {
     articleGeneratedQAModel.belongsTo(articleModel);

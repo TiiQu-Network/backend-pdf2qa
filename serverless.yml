@@ -4,6 +4,9 @@ useDotenv: true
 
 plugins:
   - serverless-better-credentials
+  - serverless-offline
+  - serverless-esbuild
+  - serverless-plugin-test-helper
 
 package:
   patterns:
@@ -19,9 +22,28 @@ provider:
 
 functions:
   ping:
-    handler: ./dist/src/lambda/ping/index.handler
+    handler: ./src/lambda/ping.handler
     name: ping
     events:
-      - httpApi:
+      - http:
           path: /
           method: get
+  authorizer:
+    handler: ./src/lambda/authorizer.handler
+    name: authorizer
+    events:
+      - http:
+          path: /authorizer
+          method: post
+  uploadPdf:
+    handler: ./src/lambda/uploadPdf.handler
+    name: uploadPdf
+    events:
+      - http:
+          path: /upload-pdf
+          method: post
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.cookie
+            type: token

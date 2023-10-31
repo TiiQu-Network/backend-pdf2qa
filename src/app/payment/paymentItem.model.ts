@@ -49,7 +49,7 @@ const initPaymentItemModel = async (sequelize: Sequelize) => {
       {
         modelName: "PaymentItem",
         freezeTableName: true,
-      }
+      },
     );
   } catch (err) {
     logger.log({
@@ -63,7 +63,7 @@ const initPaymentItemModel = async (sequelize: Sequelize) => {
 const initPaymentItemAssociations = async (
   paymentItemModel: ModelStatic<Model>,
   userModel: ModelStatic<Model>,
-  paymentTypeMappingModel: ModelStatic<Model>
+  paymentTypeMappingModel: ModelStatic<Model>,
 ) => {
   try {
     paymentItemModel.belongsTo(userModel);
