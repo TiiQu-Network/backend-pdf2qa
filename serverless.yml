@@ -102,7 +102,6 @@ resources:
 functions:
   authorizer:
     handler: ./src/lambda/authorizer.handler
-    name: authorizer
     environment:
       AUTH0_DOMAIN: ${env.AUTH0_DOMAIN}
       API_IDENTIFIER: ${env.API_IDENTIFIER}
