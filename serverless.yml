@@ -10,7 +10,6 @@ plugins:
   - serverless-s3-local
   - serverless-step-functions
   - serverless-step-functions-offline
-  - serverless-secrets-plugin
 
 package:
   patterns:
@@ -42,8 +41,6 @@ custom:
     exclude: []
   holdingAreaBucketName: ${self:custom.stage}-${self:service}-holding-area-bucket
   validatedFilesBucketName: ${self:custom.stage}-${self:service}-validated-files-bucket
-  secrets:
-    file: secrets.${opt:stage}.yml
 
 resources:
   Resources:
