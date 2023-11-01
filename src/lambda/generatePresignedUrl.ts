@@ -20,6 +20,7 @@ export interface GeneratePresignedUrl {
 }
 
 export const handler: GeneratePresignedUrl = async (event) => {
+  console.log("i have landed here")
   try {
     const HOLDING_AREA_BUCKET_NAME = process?.env?.HOLDING_AREA_BUCKET_NAME;
     if (!HOLDING_AREA_BUCKET_NAME) return error(500, 'Missing HOLDING_AREA_BUCKET_NAME');

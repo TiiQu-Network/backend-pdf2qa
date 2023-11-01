@@ -103,9 +103,9 @@ functions:
   authorizer:
     handler: ./src/lambda/authorizer.handler
     environment:
-      AUTH0_DOMAIN: ${env.AUTH0_DOMAIN}
-      API_IDENTIFIER: ${env.API_IDENTIFIER}
-      API_SECRET: ${env.API_SECRET}
+      AUTH0_DOMAIN: ${env:AUTH0_DOMAIN}
+      API_IDENTIFIER: ${env:API_IDENTIFIER}
+      API_SECRET: ${env:API_SECRET}
     events:
       - http:
           path: /authorizer

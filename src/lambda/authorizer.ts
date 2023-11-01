@@ -5,7 +5,8 @@ export interface Authorizer {
   (event: APIGatewayTokenAuthorizerEvent): Promise<AuthResponse>;
 }
 
-export const handler = async (event) => {
+export const handler: Authorizer = async (event) => {
+  const arn = event.methodArn;
   try {
     // Replace with your Auth0 domain and API identifier.
     const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN
@@ -17,27 +18,33 @@ export const handler = async (event) => {
     // verfiy authorizationToken exists
     const authorizationToken = event.authorizationToken;
     if (!authorizationToken || !API_SECRET) {
-      return generatePolicy(event, "Unauthorized");
+      return generatePolicy(event, "Unauthorized", arn);
     }
 
     // verify the token exists and has the right format
     const token = authorizationToken.split(" ");
-    if (token.length < 2) return generatePolicy(event, "Deny");
+    if (token.length < 2) return generatePolicy(event, "Deny", arn);
 
     const [, value] = token;
-    if (value === "") return generatePolicy(event, "Unauthorized");
+    if (value === "") return generatePolicy(event, "Unauthorized", arn);
 
     // verify token against API_SECRET
-    const jwtPayload = jwt.verify(token[1], API_SECRET, { algorithms: ['RS256'], audience: API_IDENTIFIER, issuer: `https://${AUTH0_DOMAIN}/` });
+    const jwtPayload = jwt.verify(token[1], API_SECRET, {
+      algorithms: ['HS256', 'HS384', 'HS512'],
+      audience: API_IDENTIFIER,
+      issuer: `https://${AUTH0_DOMAIN}/`
+    });
 
     if (jwtPayload.sub) {
-      return generatePolicy(event, "Allow");
+      return generatePolicy(event, "Allow", arn);
     }
     else {
-        return generatePolicy(event, "Unauthorized");
+        return generatePolicy(event, "Unauthorized", arn);
     }
-  } catch (e: unknown) {
-    console.error(e);
-    return generatePolicy(event, "Unauthorized");
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(e.message);
+    }
+    return generatePolicy(event, "Unauthorized", arn);
   }
 };
