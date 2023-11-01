@@ -1,31 +1,41 @@
 import { APIGatewayTokenAuthorizerEvent, AuthResponse } from "aws-lambda";
 import { generatePolicy } from "../utils/policy";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 export interface Authorizer {
   (event: APIGatewayTokenAuthorizerEvent): Promise<AuthResponse>;
 }
 
 export const handler = async (event) => {
   try {
+    // Replace with your Auth0 domain and API identifier.
+    const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN
+    const API_IDENTIFIER = process.env.API_IDENTIFIER;
+
+    // Replace with your Auth0 API secret.
+    const API_SECRET = process.env.API_SECRET;
+
     // verfiy authorizationToken exists
-    const authorizationToken = event?.authorizationToken;
-    if (!authorizationToken || authorizationToken === "") {
+    const authorizationToken = event.authorizationToken;
+    if (!authorizationToken || !API_SECRET) {
       return generatePolicy(event, "Unauthorized");
     }
 
-    // verfiy the next-auth sessionToken exists
-    const sessionToken = authorizationToken.split("=");
-    if (sessionToken.length < 2) return generatePolicy(event, "Unauthorized");
+    // verify the token exists and has the right format
+    const token = authorizationToken.split(" ");
+    if (token.length < 2) return generatePolicy(event, "Deny");
 
-    const [key, value] = sessionToken;
-    if (key !== "sessionToken") return generatePolicy(event, "Unauthorized");
+    const [, value] = token;
     if (value === "") return generatePolicy(event, "Unauthorized");
 
-    // verfiy next-auth sessionToken against NEXT_AUTH_SECRET
-    const nextAuthSecret = process?.env?.NEXT_AUTH_SECRET || "";
-    const jwtPayload = jwt.verify(value, nextAuthSecret) as JwtPayload;
+    // verify token against API_SECRET
+    const jwtPayload = jwt.verify(token[1], API_SECRET, { algorithms: ['RS256'], audience: API_IDENTIFIER, issuer: `https://${AUTH0_DOMAIN}/` });
 
-    return generatePolicy(event, "Allow", jwtPayload?.uuid);
+    if (jwtPayload.sub) {
+      return generatePolicy(event, "Allow");
+    }
+    else {
+        return generatePolicy(event, "Unauthorized");
+    }
   } catch (e: unknown) {
     console.error(e);
     return generatePolicy(event, "Unauthorized");

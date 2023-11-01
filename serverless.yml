@@ -10,6 +10,7 @@ plugins:
   - serverless-s3-local
   - serverless-step-functions
   - serverless-step-functions-offline
+  - serverless-secrets-plugin
 
 package:
   patterns:
@@ -21,7 +22,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   stage: ${opt:stage, 'dev'}
-  profile: pdf2qa-validation-api-user
+  profile: ardavan1@hotmail.co.uk
   region: eu-west-2
 
 custom:
@@ -41,6 +42,8 @@ custom:
     exclude: []
   holdingAreaBucketName: ${self:custom.stage}-${self:service}-holding-area-bucket
   validatedFilesBucketName: ${self:custom.stage}-${self:service}-validated-files-bucket
+  secrets:
+    file: secrets.${opt:stage}.yml
 
 resources:
   Resources:
@@ -52,7 +55,7 @@ resources:
           # allows S3BucketPolicy to be applied via deployment
           BlockPublicPolicy: false
           # allows public access to the bucket but within the restrictions of the S3BucketPolicy
-          RestrictPublicBuckets: false 
+          RestrictPublicBuckets: false
         CorsConfiguration:
           # allow PUT requests from our local dev environments
           CorsRules:
@@ -67,12 +70,12 @@ resources:
         BucketEncryption:
           ServerSideEncryptionConfiguration:
             - ServerSideEncryptionByDefault:
-                SSEAlgorithm: AES256 
+                SSEAlgorithm: AES256
 
     S3BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: 
+        Bucket:
           Ref: HoldingAreaBucket
         PolicyDocument:
           Version: '2012-10-17'
@@ -88,44 +91,41 @@ resources:
                   - arn:aws:s3:::${BucketName}/*
                   - BucketName:
                       Ref: HoldingAreaBucket
-                      
+
     ValidatedFilesBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:custom.validatedFilesBucketName}  
+        BucketName: ${self:custom.validatedFilesBucketName}
   Outputs:
     PdfValidationStateMachineArn:
       Description: The ARN of the PDF Validation State Machine
       Value:
-        Ref: PdfValidationStateMachine          
+        Ref: PdfValidationStateMachine
 
 functions:
   authorizer:
     handler: ./src/lambda/authorizer.handler
     name: authorizer
+    environment:
+      AUTH0_DOMAIN: ${env.AUTH0_DOMAIN}
+      API_IDENTIFIER: ${env.API_IDENTIFIER}
+      API_SECRET: ${env.API_SECRET}
     events:
       - http:
           path: /authorizer
           method: post
-  # uploadPdf: # NOTE: temporarily disabled, will reuse parts as step functions
-  #   handler: ./src/lambda/uploadPdf.handler
-  #   name: uploadPdf
-  #   events:
-  #     - http:
-  #         path: /upload-pdf
-  #         method: post
-  #         authorizer:
-  #           name: authorizer
-  #           resultTtlInSeconds: 0
-  #           identitySource: method.request.header.cookie
-  #           type: token
   generatePresignedUrl:
     handler: ./src/lambda/generatePresignedUrl.handler
     events:
       - http:
           path: /generate-presigned-url
           method: post
-          cors: true    
+          # cors: true
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
     environment:
       HOLDING_AREA_BUCKET_NAME: ${self:resources.Resources.HoldingAreaBucket.Properties.BucketName}
   triggerPdfValidation:
@@ -150,7 +150,7 @@ stepFunctions:
         States:
           CheckForMalware:
             Type: Task
-            Resource: 
+            Resource:
               Fn::GetAtt: [checkForMalware, Arn]
             End: true
         TimeoutSeconds: 300
