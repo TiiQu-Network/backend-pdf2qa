@@ -4,19 +4,15 @@ variable "ENV" {
 }
 
 variable "POSTGRES_PASSWORD" {
-  default = "adm"
+  default = "password"
 }
 
 variable "POSTGRES_USER" {
-  default = "adm"
+  default = "dev_user"
 }
 
 variable "POSTGRES_DB" {
-  default = "adm"
-}
-
-variable "VPC_CIDR" {
-  default = "10.0.0.0/16"
+  default = "pdf2qadev"
 }
 
 variable "REGION" {
